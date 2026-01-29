@@ -481,12 +481,33 @@
       const key = codeInput.value.trim();
       if (!key) return;
       codeError.classList.add('hidden');
-      codeModal.classList.add('hidden');
-      adminKey = key;
-      setDeveloperMode(true);
+      submitCode.disabled = true;
+      try {
+        const res = await fetch(BASE + '/.netlify/functions/adminUpdate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key, links: linksData.links }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 401) {
+          codeError.textContent = 'Invalid key.';
+          codeError.classList.remove('hidden');
+          return;
+        }
+        if (!res.ok) {
+          codeError.textContent = data.error || 'Could not verify key.';
+          codeError.classList.remove('hidden');
+          return;
+        }
+        codeModal.classList.add('hidden');
+        adminKey = key;
+        setDeveloperMode(true);
+      } finally {
+        submitCode.disabled = false;
+      }
     }
 
-    submitCode.addEventListener('click', trySubmitCode);
+    submitCode.addEventListener('click', () => trySubmitCode());
     codeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') trySubmitCode(); });
 
     addLinkBtn.addEventListener('click', () => {
@@ -510,11 +531,21 @@
         setDeveloperMode(false);
         return;
       }
+      const payload = {
+        key: adminKey,
+        links: linksData.links.map((l) => ({
+          id: String(l.id || ''),
+          url: String(l.url || '').trim(),
+          label: String(l.label != null ? l.label : l.url || '').trim(),
+          up: Number(l.up) >= 0 ? Number(l.up) : 0,
+          down: Number(l.down) >= 0 ? Number(l.down) : 0,
+        })).filter((l) => l.url),
+      };
       try {
         const res = await fetch(BASE + '/.netlify/functions/adminUpdate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ key: adminKey, links: linksData.links }),
+          body: JSON.stringify(payload),
         });
         const data = await res.json().catch(() => ({}));
         if (res.status === 401) {
@@ -530,7 +561,7 @@
         linksData.updatedAt = data.updatedAt;
         alert('Links saved. All viewers will see the update.');
       } catch (e) {
-        alert('Network error');
+        alert('Network error: ' + (e.message || 'failed to reach server'));
       }
     });
 

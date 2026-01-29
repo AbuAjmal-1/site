@@ -44,8 +44,16 @@ module.exports = async (req, context) => {
   const updatedAt = new Date().toISOString();
   const data = { links, updatedAt };
 
-  const store = getStore({ name: BLOB_STORE, consistency: "strong" });
-  await store.setJSON(BLOB_KEY, data);
+  try {
+    const store = getStore({ name: BLOB_STORE, consistency: "strong" });
+    await store.setJSON(BLOB_KEY, data);
+  } catch (err) {
+    console.error("adminUpdate blob write failed:", err);
+    return new Response(
+      JSON.stringify({ error: "Failed to save: " + (err.message || "storage error") }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
 
   return new Response(
     JSON.stringify({ ok: true, updatedAt }),
