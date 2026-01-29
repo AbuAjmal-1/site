@@ -489,16 +489,6 @@
         });
       });
 
-      linksList.querySelectorAll('.nevermind-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          const id = btn.getAttribute('data-id');
-          if (!id) return;
-          clearVoted(id);
-          renderLinks();
-        });
-      });
-
       if (isDeveloper) {
         linksList.querySelectorAll('.edit-count-btn').forEach(btn => {
           btn.addEventListener('click', (e) => {
@@ -669,6 +659,19 @@
       }
       renderLinks();
     }
+
+    linksList.addEventListener('click', (e) => {
+      const nevermindBtn = e.target.closest('.nevermind-btn');
+      if (nevermindBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = (nevermindBtn.getAttribute('data-id') || '').trim();
+        if (id) {
+          clearVoted(id);
+          renderLinks();
+        }
+      }
+    });
 
     loadAndRender();
   </script>
