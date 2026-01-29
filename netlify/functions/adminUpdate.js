@@ -2,6 +2,11 @@ const { getStore } = require("@netlify/blobs");
 
 const BLOB_STORE = "cjcp-links";
 const BLOB_KEY = "data";
+const HEADERS = { "Content-Type": "application/json" };
+
+function json(statusCode, data) {
+  return { statusCode, headers: HEADERS, body: JSON.stringify(data) };
+}
 
 function generateId() {
   return "link-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
@@ -18,43 +23,32 @@ function normalizeLinks(links) {
   })).filter((l) => l.url);
 }
 
-module.exports = async (req, context) => {
-  if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers: { "Content-Type": "application/json" } });
+exports.handler = async function (event, context) {
+  if (event.httpMethod !== "POST") {
+    return json(405, { error: "Method not allowed" });
   }
 
   const adminKey = process.env.ADMIN_KEY || process.env.DEV_ACCESS_KEY;
   if (!adminKey) {
-    return new Response(
-      JSON.stringify({
-        error: "Admin key not set. In Netlify: Site settings → Environment variables → add ADMIN_KEY or DEV_ACCESS_KEY with scope 'Functions' (or 'All'), then redeploy.",
-      }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return json(500, {
+      error: "Admin key not set. In Netlify: Site settings → Environment variables → add ADMIN_KEY or DEV_ACCESS_KEY with scope 'Functions' (or 'All'), then redeploy.",
+    });
   }
 
   let body;
   try {
-    if (typeof req.json === "function") {
-      body = await req.json();
-    } else {
-      const raw = req.body || "{}";
-      body = typeof raw === "string" ? JSON.parse(raw) : raw;
-    }
+    body = JSON.parse(event.body || "{}");
   } catch {
-    return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    return json(400, { error: "Invalid JSON" });
   }
 
   const { key, links: rawLinks, verify } = body;
   if (key !== adminKey) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+    return json(401, { error: "Unauthorized" });
   }
 
   if (verify === true) {
-    return new Response(
-      JSON.stringify({ ok: true }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
-    );
+    return json(200, { ok: true });
   }
 
   const links = normalizeLinks(rawLinks);
@@ -66,14 +60,8 @@ module.exports = async (req, context) => {
     await store.setJSON(BLOB_KEY, data);
   } catch (err) {
     console.error("adminUpdate blob write failed:", err);
-    return new Response(
-      JSON.stringify({ error: "Failed to save: " + (err.message || "storage error") }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return json(500, { error: "Failed to save: " + (err.message || "storage error") });
   }
 
-  return new Response(
-    JSON.stringify({ ok: true, updatedAt }),
-    { status: 200, headers: { "Content-Type": "application/json" } }
-  );
+  return json(200, { ok: true, updatedAt });
 };

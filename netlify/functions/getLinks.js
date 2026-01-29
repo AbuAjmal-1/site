@@ -2,6 +2,7 @@ const { getStore } = require("@netlify/blobs");
 
 const BLOB_STORE = "cjcp-links";
 const BLOB_KEY = "data";
+const HEADERS = { "Content-Type": "application/json" };
 
 async function getData(store) {
   const raw = await store.get(BLOB_KEY, { type: "json" });
@@ -13,11 +14,12 @@ async function getData(store) {
   return { links, updatedAt };
 }
 
-module.exports = async (req, context) => {
+exports.handler = async function (event, context) {
   const store = getStore({ name: BLOB_STORE, consistency: "strong" });
   const data = await getData(store);
-  return new Response(JSON.stringify(data), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  return {
+    statusCode: 200,
+    headers: HEADERS,
+    body: JSON.stringify(data),
+  };
 };

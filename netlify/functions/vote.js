@@ -4,9 +4,20 @@ const BLOB_STORE = "cjcp-links";
 const BLOB_KEY = "data";
 const RATE_WINDOW_MS = 60 * 1000;
 const RATE_MAX_VOTES = 20;
+const HEADERS = { "Content-Type": "application/json" };
 
-function getClientIp(req, context) {
-  return context.ip || req.headers.get("x-nf-client-connection-ip") || req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+function json(statusCode, data) {
+  return { statusCode, headers: HEADERS, body: JSON.stringify(data) };
+}
+
+function getClientIp(event) {
+  const h = event.headers || {};
+  const forwarded = h["x-forwarded-for"] || h["X-Forwarded-For"];
+  if (forwarded) {
+    const first = typeof forwarded === "string" ? forwarded.split(",")[0] : forwarded[0];
+    if (first) return first.trim();
+  }
+  return h["x-nf-client-connection-ip"] || h["X-Nf-Client-Connection-Ip"] || "unknown";
 }
 
 async function getData(store) {
@@ -19,7 +30,7 @@ async function getData(store) {
 }
 
 async function checkRateLimit(store, ip) {
-  const key = `ratelimit:${ip.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
+  const key = "ratelimit:" + String(ip).replace(/[^a-zA-Z0-9.-]/g, "_");
   const raw = await store.get(key, { type: "json" });
   const now = Date.now();
   if (!raw) return { allowed: true, count: 1, windowStart: now };
@@ -34,47 +45,43 @@ async function checkRateLimit(store, ip) {
   return { allowed: true };
 }
 
-module.exports = async (req, context) => {
-  if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers: { "Content-Type": "application/json" } });
+exports.handler = async function (event, context) {
+  if (event.httpMethod !== "POST") {
+    return json(405, { error: "Method not allowed" });
   }
 
   let body;
   try {
-    body = await req.json();
+    body = JSON.parse(event.body || "{}");
   } catch {
-    return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    return json(400, { error: "Invalid JSON" });
   }
 
   const { id, vote } = body;
   if (!id || (vote !== "up" && vote !== "down")) {
-    return new Response(JSON.stringify({ error: "Missing id or vote (up/down)" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    return json(400, { error: "Missing id or vote (up/down)" });
   }
 
   const store = getStore({ name: BLOB_STORE, consistency: "strong" });
-  const ip = getClientIp(req, context);
+  const ip = getClientIp(event);
   const rate = await checkRateLimit(store, ip);
   if (!rate.allowed) {
-    return new Response(JSON.stringify({ error: "Too many votes. Try again later." }), { status: 429, headers: { "Content-Type": "application/json" } });
+    return json(429, { error: "Too many votes. Try again later." });
   }
 
   const data = await getData(store);
   const link = data.links.find((l) => l.id === id);
   if (!link) {
-    return new Response(JSON.stringify({ error: "Link not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
+    return json(404, { error: "Link not found" });
   }
 
   const up = (link.up ?? 0) + (vote === "up" ? 1 : 0);
   const down = (link.down ?? 0) + (vote === "down" ? 1 : 0);
   link.up = up;
   link.down = down;
-  const updatedAt = new Date().toISOString();
-  data.updatedAt = updatedAt;
+  data.updatedAt = new Date().toISOString();
 
   await store.setJSON(BLOB_KEY, data);
 
-  return new Response(
-    JSON.stringify({ id, up, down }),
-    { status: 200, headers: { "Content-Type": "application/json" } }
-  );
+  return json(200, { id, up, down });
 };
