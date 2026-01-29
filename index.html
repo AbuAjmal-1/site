@@ -1,10 +1,551 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>cursor site</title>
-  </head>
-  <body>
-    <h1>yo deployed from cursor</h1>
-    <p>we live fr</p>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CJCP Dark</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #0d0d0d 0%, #1a1a2e 50%, #0d0d0d 100%);
+      color: #e0e0e0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .title {
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-align: center;
+      color: #fff;
+      text-shadow: 0 0 40px rgba(100, 150, 255, 0.2);
+      margin-bottom: 2rem;
+    }
+
+    .links-box {
+      width: 100%;
+      max-width: 720px;
+      min-height: 380px;
+      background: rgba(30, 30, 45, 0.85);
+      border: 1px solid rgba(100, 120, 180, 0.35);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .links-box.developer-mode {
+      outline: 2px solid rgba(100, 180, 255, 0.5);
+    }
+
+    .links-list {
+      list-style: none;
+      width: 100%;
+    }
+
+    .links-list li {
+      margin-bottom: 0.75rem;
+      padding: 0.6rem 0.9rem;
+      background: rgba(20, 20, 35, 0.6);
+      border-radius: 8px;
+      border-left: 3px solid rgba(100, 150, 255, 0.5);
+    }
+
+    .links-list a {
+      color: #a8c5ff;
+      text-decoration: none;
+      font-size: 1.05rem;
+    }
+
+    .links-list a:hover {
+      text-decoration: underline;
+      color: #c5d8ff;
+    }
+
+    .link-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .link-item .label {
+      color: #b0b0b0;
+      font-size: 0.9rem;
+    }
+
+    .link-item .votes {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+    }
+
+    .link-item .votes button {
+      background: rgba(60, 70, 90, 0.6);
+      border: 1px solid rgba(100, 120, 180, 0.3);
+      color: #a0b0d0;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .link-item .votes button:hover:not(:disabled) {
+      background: rgba(80, 100, 140, 0.5);
+      color: #c5d8ff;
+    }
+
+    .link-item .votes button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .link-item .votes .counts {
+      font-size: 0.85rem;
+      color: #808090;
+      margin-left: 0.25rem;
+    }
+
+    .link-item .actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .link-item .actions button {
+      background: rgba(80, 90, 120, 0.6);
+      border: 1px solid rgba(120, 140, 180, 0.4);
+      color: #c0c0c0;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .link-item .actions button:hover {
+      background: rgba(100, 120, 160, 0.6);
+      color: #fff;
+    }
+
+    .empty-state {
+      color: #606080;
+      font-size: 1rem;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .dev-panel {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(100, 120, 180, 0.25);
+      width: 100%;
+    }
+
+    .dev-panel input,
+    .dev-panel button {
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid rgba(100, 120, 180, 0.4);
+      background: rgba(20, 20, 35, 0.8);
+      color: #e0e0e0;
+      font-size: 0.95rem;
+    }
+
+    .dev-panel input {
+      width: 100%;
+      max-width: 280px;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .dev-panel .add-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .dev-panel button.primary {
+      background: rgba(80, 130, 200, 0.4);
+      color: #c5d8ff;
+      cursor: pointer;
+    }
+
+    .dev-panel button.primary:hover {
+      background: rgba(80, 130, 200, 0.6);
+    }
+
+    .dev-access-btn {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      padding: 0.6rem 1rem;
+      background: rgba(40, 50, 70, 0.9);
+      border: 1px solid rgba(100, 120, 180, 0.4);
+      color: #a0b0d0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .dev-access-btn:hover {
+      background: rgba(60, 70, 100, 0.9);
+      color: #c5d8ff;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-overlay.hidden {
+      display: none;
+    }
+
+    .modal {
+      background: linear-gradient(180deg, #1e1e2e 0%, #16162a 100%);
+      border: 1px solid rgba(100, 120, 180, 0.4);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      min-width: 280px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal h3 {
+      margin-bottom: 1rem;
+      color: #e0e0e0;
+      font-size: 1.1rem;
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      border: 1px solid rgba(100, 120, 180, 0.4);
+      background: rgba(20, 20, 35, 0.8);
+      color: #e0e0e0;
+      font-size: 1rem;
+    }
+
+    .modal .buttons {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+
+    .modal button {
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      border: 1px solid rgba(100, 120, 180, 0.4);
+      background: rgba(50, 60, 90, 0.6);
+      color: #e0e0e0;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .modal button.primary {
+      background: rgba(80, 130, 200, 0.5);
+      color: #c5d8ff;
+    }
+
+    .modal button:hover {
+      background: rgba(70, 80, 110, 0.6);
+    }
+
+    .modal .error {
+      color: #e08080;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .hidden { display: none !important; }
+    .loading { color: #606080; }
+  </style>
+</head>
+<body>
+  <h1 class="title">CJCP Dark</h1>
+
+  <div class="links-box" id="linksBox">
+    <ul class="links-list" id="linksList"></ul>
+    <p class="empty-state" id="emptyState">No links yet.</p>
+    <p class="empty-state loading hidden" id="loadingState">Loading…</p>
+    <div class="dev-panel hidden" id="devPanel">
+      <div class="add-row">
+        <input type="text" id="newLabel" placeholder="Label (e.g. Documentation)">
+        <input type="url" id="newUrl" placeholder="https://...">
+        <button type="button" class="primary" id="addLinkBtn">Add link</button>
+      </div>
+      <button type="button" class="primary" id="saveLinksBtn">Save changes (update for everyone)</button>
+    </div>
+  </div>
+
+  <button type="button" class="dev-access-btn" id="devAccessBtn">Developer access</button>
+
+  <div class="modal-overlay" id="codeModal">
+    <div class="modal">
+      <h3>Enter admin key</h3>
+      <p class="error hidden" id="codeError">Incorrect key.</p>
+      <input type="password" id="codeInput" placeholder="Admin key" autocomplete="off">
+      <div class="buttons">
+        <button type="button" id="cancelCode">Cancel</button>
+        <button type="button" class="primary" id="submitCode">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const VOTED_KEY = 'cjcp-dark-voted';
+    const BASE = '';
+
+    const linksBox = document.getElementById('linksBox');
+    const linksList = document.getElementById('linksList');
+    const emptyState = document.getElementById('emptyState');
+    const loadingState = document.getElementById('loadingState');
+    const devPanel = document.getElementById('devPanel');
+    const devAccessBtn = document.getElementById('devAccessBtn');
+    const codeModal = document.getElementById('codeModal');
+    const codeInput = document.getElementById('codeInput');
+    const codeError = document.getElementById('codeError');
+    const cancelCode = document.getElementById('cancelCode');
+    const submitCode = document.getElementById('submitCode');
+    const newLabel = document.getElementById('newLabel');
+    const newUrl = document.getElementById('newUrl');
+    const addLinkBtn = document.getElementById('addLinkBtn');
+    const saveLinksBtn = document.getElementById('saveLinksBtn');
+
+    let isDeveloper = false;
+    let adminKey = '';
+    let linksData = { links: [], updatedAt: null };
+
+    function getVotedIds() {
+      try {
+        const raw = localStorage.getItem(VOTED_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function setVoted(id) {
+      const ids = getVotedIds();
+      if (ids.includes(id)) return;
+      ids.push(id);
+      localStorage.setItem(VOTED_KEY, JSON.stringify(ids));
+    }
+
+    function escapeHtml(s) {
+      const div = document.createElement('div');
+      div.textContent = s == null ? '' : s;
+      return div.innerHTML;
+    }
+
+    async function fetchLinks() {
+      const res = await fetch(BASE + '/.netlify/functions/getLinks');
+      if (!res.ok) throw new Error('Failed to load links');
+      return res.json();
+    }
+
+    function renderLinks() {
+      const links = linksData.links;
+      const votedIds = getVotedIds();
+      linksList.innerHTML = '';
+      emptyState.classList.toggle('hidden', links.length > 0);
+      loadingState.classList.add('hidden');
+
+      links.forEach((item) => {
+        const li = document.createElement('li');
+        const voted = votedIds.includes(item.id);
+        const up = item.up ?? 0;
+        const down = item.down ?? 0;
+        li.innerHTML = `
+          <div class="link-item">
+            <div>
+              <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${escapeHtml(item.label || item.url)}</a>
+              ${item.label ? `<div class="label">${escapeHtml(item.url)}</div>` : ''}
+            </div>
+            <div class="votes">
+              <button type="button" data-id="${escapeHtml(item.id)}" data-vote="up" ${voted ? 'disabled' : ''} title="Vote up">↑</button>
+              <button type="button" data-id="${escapeHtml(item.id)}" data-vote="down" ${voted ? 'disabled' : ''} title="Vote down">↓</button>
+              <span class="counts">${up} ↑ / ${down} ↓</span>
+            </div>
+            ${isDeveloper ? `
+              <div class="actions">
+                <button type="button" data-edit-id="${escapeHtml(item.id)}">Edit</button>
+                <button type="button" data-remove-id="${escapeHtml(item.id)}">Remove</button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+        linksList.appendChild(li);
+      });
+
+      linksList.querySelectorAll('[data-vote]').forEach(btn => {
+        if (btn.disabled) return;
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.id;
+          const vote = btn.dataset.vote;
+          try {
+            const res = await fetch(BASE + '/.netlify/functions/vote', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id, vote }),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+              alert(data.error || 'Vote failed');
+              return;
+            }
+            setVoted(id);
+            const link = linksData.links.find((l) => l.id === id);
+            if (link) {
+              link.up = data.up;
+              link.down = data.down;
+            }
+            renderLinks();
+          } catch (e) {
+            alert('Network error');
+          }
+        });
+      });
+
+      if (isDeveloper) {
+        linksList.querySelectorAll('[data-remove-id]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.removeId;
+            linksData.links = linksData.links.filter((l) => l.id !== id);
+            renderLinks();
+          });
+        });
+        linksList.querySelectorAll('[data-edit-id]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.editId;
+            const item = linksData.links.find((l) => l.id === id);
+            if (!item) return;
+            const label = prompt('Label', item.label || '');
+            const url = prompt('URL', item.url || '');
+            if (label !== null && url !== null && url.trim()) {
+              item.label = label.trim() || url;
+              item.url = url.trim();
+              renderLinks();
+            }
+          });
+        });
+      }
+    }
+
+    function setDeveloperMode(on) {
+      isDeveloper = on;
+      if (!on) adminKey = '';
+      linksBox.classList.toggle('developer-mode', on);
+      devPanel.classList.toggle('hidden', !on);
+      devAccessBtn.textContent = on ? 'Exit developer mode' : 'Developer access';
+      renderLinks();
+    }
+
+    devAccessBtn.addEventListener('click', () => {
+      if (isDeveloper) {
+        setDeveloperMode(false);
+        return;
+      }
+      codeError.classList.add('hidden');
+      codeInput.value = '';
+      codeModal.classList.remove('hidden');
+      codeInput.focus();
+    });
+
+    cancelCode.addEventListener('click', () => codeModal.classList.add('hidden'));
+
+    async function trySubmitCode() {
+      const key = codeInput.value.trim();
+      if (!key) return;
+      codeError.classList.add('hidden');
+      codeModal.classList.add('hidden');
+      adminKey = key;
+      setDeveloperMode(true);
+    }
+
+    submitCode.addEventListener('click', trySubmitCode);
+    codeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') trySubmitCode(); });
+
+    addLinkBtn.addEventListener('click', () => {
+      const label = newLabel.value.trim();
+      const url = newUrl.value.trim();
+      if (!url) return;
+      linksData.links.push({
+        id: 'link-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+        url,
+        label: label || url,
+        up: 0,
+        down: 0,
+      });
+      newLabel.value = '';
+      newUrl.value = '';
+      renderLinks();
+    });
+
+    saveLinksBtn.addEventListener('click', async () => {
+      if (!adminKey) {
+        setDeveloperMode(false);
+        return;
+      }
+      try {
+        const res = await fetch(BASE + '/.netlify/functions/adminUpdate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: adminKey, links: linksData.links }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 401) {
+          adminKey = '';
+          setDeveloperMode(false);
+          alert('Invalid admin key.');
+          return;
+        }
+        if (!res.ok) {
+          alert(data.error || 'Save failed');
+          return;
+        }
+        linksData.updatedAt = data.updatedAt;
+        alert('Links saved. All viewers will see the update.');
+      } catch (e) {
+        alert('Network error');
+      }
+    });
+
+    async function loadAndRender() {
+      loadingState.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+      try {
+        linksData = await fetchLinks();
+      } catch {
+        linksData = { links: [], updatedAt: null };
+      }
+      renderLinks();
+    }
+
+    loadAndRender();
+  </script>
+</body>
 </html>
