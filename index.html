@@ -13,7 +13,7 @@
 
     body {
       min-height: 100vh;
-      background: linear-gradient(160deg, #0d0d0d 0%, #1a1a2e 50%, #0d0d0d 100%);
+      background: linear-gradient(160deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
       color: #e0e0e0;
       font-family: 'Segoe UI', system-ui, sans-serif;
       display: flex;
@@ -28,7 +28,7 @@
       letter-spacing: 0.15em;
       text-align: center;
       color: #fff;
-      text-shadow: 0 0 40px rgba(100, 150, 255, 0.2);
+      text-shadow: 0 0 40px rgba(255, 255, 255, 0.08);
       margin-bottom: 2rem;
     }
 
@@ -36,11 +36,11 @@
       width: 100%;
       max-width: 720px;
       min-height: 380px;
-      background: rgba(30, 30, 45, 0.85);
-      border: 1px solid rgba(100, 120, 180, 0.35);
+      background: rgba(28, 28, 28, 0.95);
+      border: 1px solid rgba(80, 80, 80, 0.5);
       border-radius: 16px;
       padding: 1.5rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -49,7 +49,7 @@
     }
 
     .links-box.developer-mode {
-      outline: 2px solid rgba(100, 180, 255, 0.5);
+      outline: 2px solid rgba(180, 180, 180, 0.6);
     }
 
     .links-list {
@@ -60,20 +60,20 @@
     .links-list li {
       margin-bottom: 0.75rem;
       padding: 0.6rem 0.9rem;
-      background: rgba(20, 20, 35, 0.6);
+      background: rgba(22, 22, 22, 0.8);
       border-radius: 8px;
-      border-left: 3px solid rgba(100, 150, 255, 0.5);
+      border-left: 3px solid rgba(120, 120, 120, 0.6);
     }
 
     .links-list a {
-      color: #a8c5ff;
+      color: #d0d0d0;
       text-decoration: none;
       font-size: 1.05rem;
     }
 
     .links-list a:hover {
       text-decoration: underline;
-      color: #c5d8ff;
+      color: #fff;
     }
 
     .link-item {
@@ -96,9 +96,9 @@
     }
 
     .link-item .votes button {
-      background: rgba(60, 70, 90, 0.6);
-      border: 1px solid rgba(100, 120, 180, 0.3);
-      color: #a0b0d0;
+      background: rgba(50, 50, 50, 0.8);
+      border: 1px solid rgba(100, 100, 100, 0.5);
+      color: #b0b0b0;
       padding: 0.25rem 0.5rem;
       border-radius: 4px;
       cursor: pointer;
@@ -106,8 +106,8 @@
     }
 
     .link-item .votes button:hover:not(:disabled) {
-      background: rgba(80, 100, 140, 0.5);
-      color: #c5d8ff;
+      background: rgba(70, 70, 70, 0.9);
+      color: #fff;
     }
 
     .link-item .votes button:disabled {
@@ -117,7 +117,7 @@
 
     .link-item .votes .counts {
       font-size: 0.85rem;
-      color: #808090;
+      color: #888;
       margin-left: 0.25rem;
     }
 
@@ -127,8 +127,8 @@
     }
 
     .link-item .actions button {
-      background: rgba(80, 90, 120, 0.6);
-      border: 1px solid rgba(120, 140, 180, 0.4);
+      background: rgba(55, 55, 55, 0.9);
+      border: 1px solid rgba(100, 100, 100, 0.5);
       color: #c0c0c0;
       padding: 0.25rem 0.5rem;
       border-radius: 4px;
@@ -137,12 +137,12 @@
     }
 
     .link-item .actions button:hover {
-      background: rgba(100, 120, 160, 0.6);
+      background: rgba(75, 75, 75, 0.95);
       color: #fff;
     }
 
     .empty-state {
-      color: #606080;
+      color: #666;
       font-size: 1rem;
       padding: 2rem;
       text-align: center;
@@ -151,7 +151,7 @@
     .dev-panel {
       margin-top: 1rem;
       padding-top: 1rem;
-      border-top: 1px solid rgba(100, 120, 180, 0.25);
+      border-top: 1px solid rgba(80, 80, 80, 0.4);
       width: 100%;
     }
 
@@ -159,8 +159,8 @@
     .dev-panel button {
       padding: 0.5rem 0.75rem;
       border-radius: 6px;
-      border: 1px solid rgba(100, 120, 180, 0.4);
-      background: rgba(20, 20, 35, 0.8);
+      border: 1px solid rgba(100, 100, 100, 0.5);
+      background: rgba(22, 22, 22, 0.9);
       color: #e0e0e0;
       font-size: 0.95rem;
     }
@@ -181,13 +181,14 @@
     }
 
     .dev-panel button.primary {
-      background: rgba(80, 130, 200, 0.4);
-      color: #c5d8ff;
+      background: rgba(60, 60, 60, 0.9);
+      color: #e0e0e0;
       cursor: pointer;
     }
 
     .dev-panel button.primary:hover {
-      background: rgba(80, 130, 200, 0.6);
+      background: rgba(80, 80, 80, 0.95);
+      color: #fff;
     }
 
     .dev-access-btn {
@@ -195,18 +196,18 @@
       bottom: 1.5rem;
       right: 1.5rem;
       padding: 0.6rem 1rem;
-      background: rgba(40, 50, 70, 0.9);
-      border: 1px solid rgba(100, 120, 180, 0.4);
-      color: #a0b0d0;
+      background: rgba(35, 35, 35, 0.95);
+      border: 1px solid rgba(90, 90, 90, 0.6);
+      color: #b0b0b0;
       border-radius: 8px;
       cursor: pointer;
       font-size: 0.9rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
 
     .dev-access-btn:hover {
-      background: rgba(60, 70, 100, 0.9);
-      color: #c5d8ff;
+      background: rgba(55, 55, 55, 0.95);
+      color: #fff;
     }
 
     .modal-overlay {
@@ -224,12 +225,12 @@
     }
 
     .modal {
-      background: linear-gradient(180deg, #1e1e2e 0%, #16162a 100%);
-      border: 1px solid rgba(100, 120, 180, 0.4);
+      background: linear-gradient(180deg, #1c1c1c 0%, #141414 100%);
+      border: 1px solid rgba(80, 80, 80, 0.6);
       border-radius: 12px;
       padding: 1.5rem 2rem;
       min-width: 280px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
     }
 
     .modal h3 {
@@ -243,8 +244,8 @@
       padding: 0.6rem 0.8rem;
       margin-bottom: 1rem;
       border-radius: 6px;
-      border: 1px solid rgba(100, 120, 180, 0.4);
-      background: rgba(20, 20, 35, 0.8);
+      border: 1px solid rgba(100, 100, 100, 0.5);
+      background: rgba(22, 22, 22, 0.9);
       color: #e0e0e0;
       font-size: 1rem;
     }
@@ -258,30 +259,31 @@
     .modal button {
       padding: 0.5rem 1rem;
       border-radius: 6px;
-      border: 1px solid rgba(100, 120, 180, 0.4);
-      background: rgba(50, 60, 90, 0.6);
+      border: 1px solid rgba(100, 100, 100, 0.5);
+      background: rgba(45, 45, 45, 0.9);
       color: #e0e0e0;
       cursor: pointer;
       font-size: 0.9rem;
     }
 
     .modal button.primary {
-      background: rgba(80, 130, 200, 0.5);
-      color: #c5d8ff;
+      background: rgba(65, 65, 65, 0.95);
+      color: #fff;
     }
 
     .modal button:hover {
-      background: rgba(70, 80, 110, 0.6);
+      background: rgba(70, 70, 70, 0.95);
+      color: #fff;
     }
 
     .modal .error {
-      color: #e08080;
+      color: #c0c0c0;
       font-size: 0.85rem;
       margin-bottom: 0.5rem;
     }
 
     .hidden { display: none !important; }
-    .loading { color: #606080; }
+    .loading { color: #666; }
   </style>
 </head>
 <body>
