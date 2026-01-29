@@ -1,4 +1,4 @@
-const { getStore } = require("@netlify/blobs");
+const { connectLambda, getStore } = require("@netlify/blobs");
 
 const BLOB_STORE = "cjcp-links";
 const BLOB_KEY = "data";
@@ -62,6 +62,7 @@ exports.handler = async function (event, context) {
     return json(400, { error: "Missing id or vote (up/down)" });
   }
 
+  connectLambda(event);
   const store = getStore({ name: BLOB_STORE, consistency: "strong" });
   const ip = getClientIp(event);
   const rate = await checkRateLimit(store, ip);

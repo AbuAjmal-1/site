@@ -1,4 +1,4 @@
-const { getStore } = require("@netlify/blobs");
+const { connectLambda, getStore } = require("@netlify/blobs");
 
 const BLOB_STORE = "cjcp-links";
 const BLOB_KEY = "data";
@@ -15,6 +15,7 @@ async function getData(store) {
 }
 
 exports.handler = async function (event, context) {
+  connectLambda(event);
   const store = getStore({ name: BLOB_STORE, consistency: "strong" });
   const data = await getData(store);
   return {
