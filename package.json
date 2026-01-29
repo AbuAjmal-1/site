@@ -1,0 +1,8 @@
+{
+  "name": "cjcp-dark",
+  "private": true,
+  "description": "CJCP Dark link board with Netlify Blobs",
+  "dependencies": {
+    "@netlify/blobs": "^11.0.0"
+  }
+}
