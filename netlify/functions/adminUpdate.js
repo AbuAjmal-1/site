@@ -23,9 +23,14 @@ module.exports = async (req, context) => {
     return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers: { "Content-Type": "application/json" } });
   }
 
-  const adminKey = process.env.ADMIN_KEY;
+  const adminKey = process.env.ADMIN_KEY || process.env.DEV_ACCESS_KEY;
   if (!adminKey) {
-    return new Response(JSON.stringify({ error: "Admin not configured" }), { status: 500, headers: { "Content-Type": "application/json" } });
+    return new Response(
+      JSON.stringify({
+        error: "Admin key not set. In Netlify: Site settings → Environment variables → add ADMIN_KEY or DEV_ACCESS_KEY with scope 'Functions' (or 'All'), then redeploy.",
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 
   let body;
