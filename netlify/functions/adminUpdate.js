@@ -35,7 +35,12 @@ module.exports = async (req, context) => {
 
   let body;
   try {
-    body = await req.json();
+    if (typeof req.json === "function") {
+      body = await req.json();
+    } else {
+      const raw = req.body || "{}";
+      body = typeof raw === "string" ? JSON.parse(raw) : raw;
+    }
   } catch {
     return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400, headers: { "Content-Type": "application/json" } });
   }
