@@ -46,14 +46,11 @@
       width: 100%;
       max-width: 720px;
       min-height: 380px;
-      background: linear-gradient(180deg, #f5f5f5 0%, #ebebeb 100%);
-      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: rgba(28, 28, 28, 0.95);
+      border: 1px solid rgba(80, 80, 80, 0.5);
       border-radius: 16px;
       padding: 1.5rem;
-      box-shadow:
-        0 4px 6px rgba(0, 0, 0, 0.07),
-        0 12px 24px rgba(0, 0, 0, 0.12),
-        0 24px 48px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -62,7 +59,7 @@
     }
 
     .links-box.developer-mode {
-      outline: 2px solid rgba(0, 0, 0, 0.2);
+      outline: 2px solid rgba(180, 180, 180, 0.6);
     }
 
     .links-list {
@@ -73,21 +70,20 @@
     .links-list li {
       margin-bottom: 0.75rem;
       padding: 0.6rem 0.9rem;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(22, 22, 22, 0.8);
       border-radius: 8px;
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      border-left: 3px solid rgba(0, 0, 0, 0.15);
+      border-left: 3px solid rgba(120, 120, 120, 0.6);
     }
 
     .links-list a {
-      color: #222;
+      color: #d0d0d0;
       text-decoration: none;
       font-size: 1.05rem;
     }
 
     .links-list a:hover {
       text-decoration: underline;
-      color: #000;
+      color: #fff;
     }
 
     .link-item {
@@ -98,7 +94,7 @@
     }
 
     .link-item .label {
-      color: #555;
+      color: #b0b0b0;
       font-size: 0.9rem;
     }
 
@@ -135,10 +131,28 @@
     }
 
     .link-item .votes .counts {
-      font-size: 1rem;
+      font-size: 1.4rem;
       font-weight: 700;
-      color: #222;
+      color: #fff;
       min-width: 1.5em;
+    }
+
+    .link-item .votes button.nevermind-btn {
+      background: #ddc020;
+      border: 1px solid #c4a810;
+      color: #1a1a1a;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.7rem;
+      border-radius: 3px;
+      cursor: pointer;
+      font-weight: 600;
+      min-height: 22px;
+      width: auto;
+    }
+
+    .link-item .votes button.nevermind-btn:hover {
+      background: #e8cc30;
+      border-color: #d4b020;
     }
 
     .link-item .actions {
@@ -147,9 +161,9 @@
     }
 
     .link-item .actions button {
-      background: rgba(0, 0, 0, 0.06);
-      border: 1px solid rgba(0, 0, 0, 0.15);
-      color: #333;
+      background: rgba(55, 55, 55, 0.9);
+      border: 1px solid rgba(100, 100, 100, 0.5);
+      color: #c0c0c0;
       padding: 0.25rem 0.5rem;
       border-radius: 4px;
       cursor: pointer;
@@ -157,8 +171,8 @@
     }
 
     .link-item .actions button:hover {
-      background: rgba(0, 0, 0, 0.1);
-      color: #000;
+      background: rgba(75, 75, 75, 0.95);
+      color: #fff;
     }
 
     .empty-state {
@@ -171,7 +185,7 @@
     .dev-panel {
       margin-top: 1rem;
       padding-top: 1rem;
-      border-top: 1px solid rgba(0, 0, 0, 0.12);
+      border-top: 1px solid rgba(80, 80, 80, 0.4);
       width: 100%;
     }
 
@@ -179,9 +193,9 @@
     .dev-panel button {
       padding: 0.5rem 0.75rem;
       border-radius: 6px;
-      border: 1px solid rgba(0, 0, 0, 0.2);
-      background: rgba(255, 255, 255, 0.95);
-      color: #222;
+      border: 1px solid rgba(100, 100, 100, 0.5);
+      background: rgba(22, 22, 22, 0.9);
+      color: #e0e0e0;
       font-size: 0.95rem;
     }
 
@@ -201,14 +215,14 @@
     }
 
     .dev-panel button.primary {
-      background: rgba(0, 0, 0, 0.08);
-      color: #222;
+      background: rgba(60, 60, 60, 0.9);
+      color: #e0e0e0;
       cursor: pointer;
     }
 
     .dev-panel button.primary:hover {
-      background: rgba(0, 0, 0, 0.12);
-      color: #000;
+      background: rgba(80, 80, 80, 0.95);
+      color: #fff;
     }
 
     .dev-access-btn {
@@ -377,6 +391,11 @@
       localStorage.setItem(VOTED_KEY, JSON.stringify(ids));
     }
 
+    function clearVoted(id) {
+      const ids = getVotedIds().filter((x) => x !== id);
+      localStorage.setItem(VOTED_KEY, JSON.stringify(ids));
+    }
+
     function escapeHtml(s) {
       const div = document.createElement('div');
       div.textContent = s == null ? '' : s;
@@ -410,6 +429,7 @@
             <div class="votes">
               <button type="button" class="sniped-btn" data-id="${escapeHtml(item.id)}" data-vote="up" ${voted ? 'disabled' : ''}>SNIPED BY <b>IT</b> ??</button>
               <span class="counts">${up}</span>
+              <button type="button" class="nevermind-btn" data-id="${escapeHtml(item.id)}">nevermind</button>
             </div>
             ${isDeveloper ? `
               <div class="actions">
@@ -422,11 +442,13 @@
         linksList.appendChild(li);
       });
 
-      linksList.querySelectorAll('[data-vote]').forEach(btn => {
-        if (btn.disabled) return;
-        btn.addEventListener('click', async () => {
-          const id = btn.dataset.id;
-          const vote = btn.dataset.vote;
+      linksList.querySelectorAll('.sniped-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          if (btn.disabled) return;
+          const id = btn.getAttribute('data-id');
+          const vote = 'up';
+          if (!id) return;
           try {
             const res = await fetch(BASE + '/.netlify/functions/vote', {
               method: 'POST',
@@ -448,6 +470,16 @@
           } catch (e) {
             alert('Network error');
           }
+        });
+      });
+
+      linksList.querySelectorAll('.nevermind-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const id = btn.getAttribute('data-id');
+          if (!id) return;
+          clearVoted(id);
+          renderLinks();
         });
       });
 
