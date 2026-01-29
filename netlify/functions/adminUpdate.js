@@ -57,7 +57,7 @@ exports.handler = async function (event, context) {
 
   try {
     connectLambda(event);
-    const store = getStore({ name: BLOB_STORE, consistency: "strong" });
+    const store = getStore({ name: BLOB_STORE });
     await store.setJSON(BLOB_KEY, data);
   } catch (err) {
     console.error("adminUpdate blob write failed:", err);

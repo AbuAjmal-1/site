@@ -16,7 +16,7 @@ async function getData(store) {
 
 exports.handler = async function (event, context) {
   connectLambda(event);
-  const store = getStore({ name: BLOB_STORE, consistency: "strong" });
+  const store = getStore({ name: BLOB_STORE });
   const data = await getData(store);
   return {
     statusCode: 200,

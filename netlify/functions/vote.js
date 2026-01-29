@@ -63,7 +63,7 @@ exports.handler = async function (event, context) {
   }
 
   connectLambda(event);
-  const store = getStore({ name: BLOB_STORE, consistency: "strong" });
+  const store = getStore({ name: BLOB_STORE });
   const ip = getClientIp(event);
   const rate = await checkRateLimit(store, ip);
   if (!rate.allowed) {
