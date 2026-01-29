@@ -486,22 +486,31 @@
         const res = await fetch(BASE + '/.netlify/functions/adminUpdate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ key, links: linksData.links }),
+          body: JSON.stringify({ key, verify: true }),
         });
-        const data = await res.json().catch(() => ({}));
+        const text = await res.text();
+        let data = {};
+        try {
+          data = JSON.parse(text);
+        } catch (_) {
+          data = { error: text ? text.slice(0, 150) : 'Invalid response' };
+        }
         if (res.status === 401) {
           codeError.textContent = 'Invalid key.';
           codeError.classList.remove('hidden');
           return;
         }
         if (!res.ok) {
-          codeError.textContent = data.error || 'Could not verify key.';
+          codeError.textContent = data.error || 'Could not verify key (status ' + res.status + ').';
           codeError.classList.remove('hidden');
           return;
         }
         codeModal.classList.add('hidden');
         adminKey = key;
         setDeveloperMode(true);
+      } catch (e) {
+        codeError.textContent = 'Network error: ' + (e.message || 'could not reach server');
+        codeError.classList.remove('hidden');
       } finally {
         submitCode.disabled = false;
       }

@@ -40,9 +40,16 @@ module.exports = async (req, context) => {
     return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400, headers: { "Content-Type": "application/json" } });
   }
 
-  const { key, links: rawLinks } = body;
+  const { key, links: rawLinks, verify } = body;
   if (key !== adminKey) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+  }
+
+  if (verify === true) {
+    return new Response(
+      JSON.stringify({ ok: true }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   }
 
   const links = normalizeLinks(rawLinks);
